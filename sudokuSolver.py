@@ -1,68 +1,57 @@
-import collections
+
 
 class Solution(object):
-    def solveSudoku(self, board):
-        """
-        :type board: List[List[str]]
-        :rtype: None Do not return anything, modify board in-place instead.
-        """
+    def solveSudoku(self, board, r=0, c=0):
+    
+        if r==9:
+            return True
+        elif c == 9:
+            return self.solveSudoku(board,r+1,0)
+        elif str(board[r][c])!= ".":
+            return self.solveSudoku(board,r,c+1)
+        else:
+            for k in range(1,10):
+                if self.isValid(board,r,c,k):
+                    print("hello")
+                    board[r][c]= str(k)
+                    print(board)
+                    if self.solveSudoku(board, r,c+1):
+                        return True
+                    board[r][c] = "." 
+            return False
         
-        ## create three hash tables and populate it with current bord
+       
         
-        cols = collections.defaultdict(set)
-        rows = collections.defaultdict(set)
-        subSqures = collections.defaultdict(set)       
-        for r in range(9):
-            if r < 3:
-                rId = "A"
-            elif r >= 3 and r < 6:
-                rId = "B"
-            else:
-                rId = "C"            
-            for c in range(9):               
-                if c < 3:
-                    cId = "A"
-                elif c >= 3 and c < 6:
-                    cId = "B"
-                else:
-                    cId = "C"
-                if board[r][c] ==".":
-                    continue
-                else:
-                    cols[c].add(board[r][c])
-                    rows[r].add(board[r][c])
-                    subSqures[rId+cId].add(board[r][c])
-        for r in range(9):
-            if r < 3:
-                rId = "A"
-            elif (r >= 3 and r < 6):
-                rId = "B"
-            else:
-                rId = "C" 
-            for c in range(9):
                 
-                if c < 3:
-                    cId = "A"
-                elif c >= 3 and c < 6:
-                    cId = "B"
-                else:
-                    cId = "C"
-                
-                if board[r][c] ==".":
-                    # if a location need a value, iterate over 1-9 see if fits
-                    for i in range(1,10):
-                        if (str(i) in cols[c] or 
-                            str(i) in rows[r] or 
-                            str(i) in subSqures[ rId+cId]):
-                            continue
-                        else:
-                            board[r][c] = str(i)
-                            cols[c].add(str(i))
-                            rows[r].add(str(i))
-                            subSqures[rId+cId].add(str(i))
-                else:
-                    continue
-        print(board)
+    def isValid(self,board,r,c,k):
+        not_in_row = str(k) not in board[r]
+        
+        not_in_col = True
+        
+        for i in range(9):
+            if str(k) == board[i][c]:
+                not_in_col = False
+                break
+            
+        
+        
+        not_in_subSq = True
+        sqr_start = r - (r%3)
+        sqc_start =c - (c%3)
+       
+        
+        for i in range(sqr_start,sqr_start+3):
+            for j in range(sqc_start,sqc_start+3):
+                if board[i][j] == str(k):
+                    not_in_subSq = False
+                    break      
+            
+        return not_in_col and not_in_row and not_in_subSq
+         
+        
+        
+        
+  
         
         
         
